@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scenario’s plek 16</title>
+
+  <style>
+    :root {
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --text: #161616;
+      --muted: #6b7280;
+      --line: #d8d8d8;
+      --red: #e2001a;
+      --blue: #009ee0;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .vi-scenario-tool {
+      width: 100%;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 24px 14px 22px;
+    }
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--red);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(25px, 4vw, 40px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .intro {
+      max-width: 700px;
+      margin: 0;
+      color: #444;
+      font-size: 15.5px;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .selector-card {
+      padding: 16px;
+    }
+
+    .result-card {
+      position: sticky;
+      top: 14px;
+      padding: 16px;
+    }
+
+    .section-title {
+      margin: 0 0 13px;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .round-block {
+      padding-top: 1px;
+    }
+
+    .round-block + .round-block {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .round-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 11px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .round-heading::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+    }
+
+    .match {
+      padding: 0 0 14px;
+    }
+
+    .match:last-child {
+      padding-bottom: 0;
+    }
+
+    .match-label {
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    button.choice {
+      min-height: 40px;
+      padding: 8px 6px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fafafa;
+      color: var(--text);
+      font-size: 12.5px;
+      font-weight: 700;
+      line-height: 1.15;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease, border 0.12s ease, color 0.12s ease;
+    }
+
+    button.choice:hover {
+      transform: translateY(-1px);
+      border-color: #b7b7b7;
+      background: #fff;
+    }
+
+    button.choice.active {
+      border-color: var(--red);
+      background: var(--red);
+      color: #fff;
+    }
+
+    .points-list {
+      display: grid;
+      gap: 10px;
+      margin: 4px 0 16px;
+    }
+
+    .team-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: #f7f7f7;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .team-name {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .team-meta {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .points {
+      min-width: 54px;
+      text-align: right;
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .team-row.lowest {
+      background: #fff1f2;
+      border-color: rgba(226, 0, 26, 0.25);
+    }
+
+    .team-row.highest {
+      background: #eff6ff;
+      border-color: rgba(0, 158, 224, 0.22);
+    }
+
+    .status {
+      padding: 15px;
+      border-radius: 16px;
+      background: #f7f7f7;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      margin-bottom: 14px;
+    }
+
+    .status-label {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-main {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .status-note {
+      margin: 8px 0 0;
+      color: #444;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .scenario-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 2px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--red);
+    }
+
+    @media (max-width: 780px) {
+      .vi-scenario-tool {
+        max-width: 100%;
+        padding: 22px 12px 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-card {
+        position: relative;
+        top: auto;
+      }
+
+      .choices {
+        grid-template-columns: 1fr;
+      }
+
+      button.choice {
+        min-height: 40px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="vi-scenario-tool">
+    <section class="header">
+      <div class="kicker">VI · Scenario's plek 16</div>
+      <h1>Wie gaat de play-offs in?</h1>
+      <p class="intro">
+        Excelsior staat voor aanvang van speelronde 33 op 34 punten, Telstar en FC Volendam allebei op 31.
+        Kies hieronder de uitslagen van de vier resterende duels en zie wat de invloed is op de eindstand.
+      </p>
+    </section>
+
+    <section class="grid">
+      <div class="card selector-card">
+        <h2 class="section-title">Kies de uitslagen</h2>
+
+        <div class="round-block">
+          <div class="round-heading">Speelronde 33</div>
+
+          <div class="match" data-match="excelsior_volendam">
+            <div class="match-label">Excelsior vs FC Volendam</div>
+            <div class="choices">
+              <button class="choice" data-value="winst_excelsior">Excelsior wint</button>
+              <button class="choice active" data-value="gelijkspel">Gelijkspel</button>
+              <button class="choice" data-value="winst_fc_volendam">Volendam wint</button>
+            </div>
+          </div>
+
+          <div class="match" data-match="telstar_heracles">
+            <div class="match-label">Telstar vs Heracles Almelo</div>
+            <div class="choices">
+              <button class="choice" data-value="winst_telstar">Telstar wint</button>
+              <button class="choice active" data-value="gelijkspel">Gelijkspel</button>
+              <button class="choice" data-value="winst_heracles">Heracles wint</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="round-block">
+          <div class="round-heading">Speelronde 34</div>
+
+          <div class="match" data-match="fc_volendam_telstar">
+            <div class="match-label">Volendam vs Telstar</div>
+            <div class="choices">
+              <button class="choice" data-value="winst_fc_volendam">Volendam wint</button>
+              <button class="choice active" data-value="gelijkspel">Gelijkspel</button>
+              <button class="choice" data-value="winst_telstar">Telstar wint</button>
+            </div>
+          </div>
+
+          <div class="match" data-match="sparta_excelsior">
+            <div class="match-label">Sparta Rotterdam vs Excelsior</div>
+            <div class="choices">
+              <button class="choice" data-value="winst_sparta">Sparta wint</button>
+              <button class="choice active" data-value="gelijkspel">Gelijkspel</button>
+              <button class="choice" data-value="winst_excelsior">Excelsior wint</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="card result-card">
+        <h2 class="section-title">Punten</h2>
+
+        <div class="points-list" id="pointsList"></div>
+
+        <div class="status" id="statusBox">
+          <div class="status-label">Wie eindigt 16e?</div>
+          <p class="status-main" id="statusMain"></p>
+          <p class="status-note" id="statusNote"></p>
+        </div>
+
+        <div class="scenario-pill">
+          <span class="dot"></span>
+          <span id="scenarioText">Scenario 1 van 81</span>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const startingPoints = {
+      excelsior: 34,
+      telstar: 31,
+      fc_volendam: 31
+    };
+
+    const teamLabels = {
+      excelsior: "Excelsior",
+      telstar: "Telstar",
+      fc_volendam: "FC Volendam"
+    };
+
+    const state = {
+      excelsior_volendam: "gelijkspel",
+      telstar_heracles: "gelijkspel",
+      fc_volendam_telstar: "gelijkspel",
+      sparta_excelsior: "gelijkspel"
+    };
+
+    const matchOrder = [
+      "excelsior_volendam",
+      "telstar_heracles",
+      "fc_volendam_telstar",
+      "sparta_excelsior"
+    ];
+
+    const optionOrder = {
+      excelsior_volendam: ["gelijkspel", "winst_excelsior", "winst_fc_volendam"],
+      telstar_heracles: ["gelijkspel", "winst_telstar", "winst_heracles"],
+      fc_volendam_telstar: ["gelijkspel", "winst_fc_volendam", "winst_telstar"],
+      sparta_excelsior: ["gelijkspel", "winst_sparta", "winst_excelsior"]
+    };
+
+    function calculatePoints(currentState) {
+      const points = {
+        excelsior: startingPoints.excelsior,
+        telstar: startingPoints.telstar,
+        fc_volendam: startingPoints.fc_volendam
+      };
+
+      if (currentState.excelsior_volendam === "winst_excelsior") {
+        points.excelsior += 3;
+      } else if (currentState.excelsior_volendam === "winst_fc_volendam") {
+        points.fc_volendam += 3;
+      } else {
+        points.excelsior += 1;
+        points.fc_volendam += 1;
+      }
+
+      if (currentState.telstar_heracles === "winst_telstar") {
+        points.telstar += 3;
+      } else if (currentState.telstar_heracles === "gelijkspel") {
+        points.telstar += 1;
+      }
+
+      if (currentState.fc_volendam_telstar === "winst_fc_volendam") {
+        points.fc_volendam += 3;
+      } else if (currentState.fc_volendam_telstar === "winst_telstar") {
+        points.telstar += 3;
+      } else {
+        points.fc_volendam += 1;
+        points.telstar += 1;
+      }
+
+      if (currentState.sparta_excelsior === "winst_excelsior") {
+        points.excelsior += 3;
+      } else if (currentState.sparta_excelsior === "gelijkspel") {
+        points.excelsior += 1;
+      }
+
+      return points;
+    }
+
+    function getScenarioNumber(currentState) {
+      let number = 1;
+      let multiplier = 1;
+
+      for (const match of matchOrder) {
+        const index = optionOrder[match].indexOf(currentState[match]);
+        number += index * multiplier;
+        multiplier *= 3;
+      }
+
+      return number;
+    }
+
+    function formatTeamList(teamKeys) {
+      const names = teamKeys.map(team => teamLabels[team]);
+
+      if (names.length === 1) {
+        return names[0];
+      }
+
+      if (names.length === 2) {
+        return `${names[0]} en ${names[1]}`;
+      }
+
+      return `${names.slice(0, -1).join(", ")} en ${names[names.length - 1]}`;
+    }
+
+    function getLowestStatus(points) {
+      const teams = Object.keys(points);
+      const minPoints = Math.min(...teams.map(team => points[team]));
+      const lowestTeams = teams.filter(team => points[team] === minPoints);
+      const teamList = formatTeamList(lowestTeams);
+
+      if (lowestTeams.length === 1) {
+        return {
+          main: `${teamList} wordt 16e met ${minPoints} punten.`,
+          note: `${teamList} eindigt in dit scenario op het laagste puntenaantal van de drie.`
+        };
+      }
+
+      if (lowestTeams.length === 2) {
+        return {
+          main: `${teamList} eindigen allebei op ${minPoints} punten.`,
+          note: `Doelsaldo bepaalt wie de play-offs in moet. Als dat gelijk is, wordt gekeken naar meeste doelpunten voor.`
+        };
+      }
+
+      return {
+        main: `Alle drie de clubs eindigen op ${minPoints} punten.`,
+        note: `Goed gevonden, dit is het spannendste scenario! Alle clubs op ${minPoints} punten, doelsaldo geeft de doorslag.`
+      };
+    }
+
+    function render() {
+      const points = calculatePoints(state);
+      const min = Math.min(points.excelsior, points.telstar, points.fc_volendam);
+      const max = Math.max(points.excelsior, points.telstar, points.fc_volendam);
+
+      const sortedTeams = Object.keys(points).sort((a, b) => {
+        if (points[b] !== points[a]) return points[b] - points[a];
+        return teamLabels[a].localeCompare(teamLabels[b], "nl");
+      });
+
+      const pointsList = document.getElementById("pointsList");
+      pointsList.innerHTML = "";
+
+      sortedTeams.forEach(team => {
+        const row = document.createElement("div");
+        row.className = "team-row";
+
+        if (points[team] === min) {
+          row.classList.add("lowest");
+        }
+
+        if (points[team] === max) {
+          row.classList.add("highest");
+        }
+
+        const diff = points[team] - startingPoints[team];
+        const diffText = diff === 1 ? "+1 punt" : `+${diff} punten`;
+
+        row.innerHTML = `
+          <div>
+            <div class="team-name">${teamLabels[team]}</div>
+            <div class="team-meta">begon op ${startingPoints[team]} punten, ${diffText}</div>
+          </div>
+          <div class="points">${points[team]}</div>
+        `;
+
+        pointsList.appendChild(row);
+      });
+
+      const status = getLowestStatus(points);
+      document.getElementById("statusMain").textContent = status.main;
+      document.getElementById("statusNote").textContent = status.note;
+
+      const scenarioNumber = getScenarioNumber(state);
+      document.getElementById("scenarioText").textContent = `Scenario ${scenarioNumber} van 81`;
+    }
+
+    document.querySelectorAll(".match").forEach(matchElement => {
+      const matchName = matchElement.dataset.match;
+
+      matchElement.querySelectorAll(".choice").forEach(button => {
+        button.addEventListener("click", () => {
+          state[matchName] = button.dataset.value;
+
+          matchElement.querySelectorAll(".choice").forEach(otherButton => {
+            otherButton.classList.remove("active");
+          });
+
+          button.classList.add("active");
+          render();
+        });
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
